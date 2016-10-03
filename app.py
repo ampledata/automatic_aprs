@@ -4,6 +4,8 @@ import os
 import json
 
 import aprs
+import aprs.util
+import aprs.geo_util
 import flask
 
 
@@ -29,13 +31,13 @@ def slash():
         'path': 'TCPIP',
         'source': CALLSIGN,
         'text': "!%s\\%s7Automatic-to-APRS gateway." %
-            (aprs.util.dec2dm_lat(location['lat']),
-             aprs.util.dec2dm_lng(location['lon']))
+            (aprs.geo_util.dec2dm_lat(location['lat']),
+             aprs.geo_util.dec2dm_lng(location['lon']))
     }
 
     aprs_frame = aprs.util.format_aprs_frame(frame)
     print aprs_frame
-    
+
     aprs_result = aprs_conn.send(aprs_frame, protocol='TCP')
     print aprs_result
 
