@@ -17,7 +17,7 @@ CALLSIGN = 'W2GMD-A'
 def slash():
     aprs_conn = aprs.TCP(
         os.environ.get('APRS_LOGIN', 'AUTOMATIC'), os.environ.get('APRS_PORT'))
-    aprs_conn.connect()
+    aprs_conn.start()
 
     post_data = json.loads(flask.request.data)
     if 'location' in post_data:
