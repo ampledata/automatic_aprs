@@ -17,7 +17,8 @@ CALLSIGN = 'W2GMD-A'
 
 @APRSApp.route('/', methods=['POST'])
 def slash():
-    aprs_conn = aprs.APRS('AUTOMATIC', '15600')
+    aprs_conn = aprs.TCP(
+        os.environ.get('APRS_LOGIN', 'AUTOMATIC'), os.environ.get('APRS_PORT'))
     aprs_conn.connect()
 
     post_data = json.loads(flask.request.data)
@@ -26,19 +27,22 @@ def slash():
     else:
         return 'OK'
 
-    frame = {
-        'destination': 'APRS',
-        'path': 'TCPIP',
-        'source': CALLSIGN,
-        'text': "!%s\\%s7Automatic-to-APRS gateway." %
-            (aprs.geo_util.dec2dm_lat(location['lat']),
-             aprs.geo_util.dec2dm_lng(location['lon']))
-    }
+    if 'vehicle' in post_data:
+        vehicle = post_data['vehicle']['id']
+    else:
+        vehicle = ''
 
-    aprs_frame = aprs.util.format_aprs_frame(frame)
-    print(aprs_frame)
+    print(locals())
 
-    aprs_result = aprs_conn.send(aprs_frame, protocol='TCP')
+    frame = aprs.Frame()
+    frame.destination = 'APYSAU'
+    frame.path = ['TCPIP']
+    frame.source = CALLSIGN
+    frame.text = "!%s\\%s7Automatic-to-APRS gateway. http://ampledata.org" %
+        (aprs.dec2dm_lat(location['lat']), aprs.dec2dm_lng(location['lon'])
+
+    print(frame)
+    aprs_result = aprs_conn.send(frame)
     print(aprs_result)
 
     return 'OK'
