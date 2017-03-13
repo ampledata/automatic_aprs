@@ -36,10 +36,10 @@ def slash():
     }
 
     aprs_frame = aprs.util.format_aprs_frame(frame)
-    print aprs_frame
+    print(aprs_frame)
 
     aprs_result = aprs_conn.send(aprs_frame, protocol='TCP')
-    print aprs_result
+    print(aprs_result)
 
     return 'OK'
 
