@@ -4,8 +4,6 @@ import os
 import json
 
 import aprs
-import aprs.util
-import aprs.geo_util
 import flask
 
 
