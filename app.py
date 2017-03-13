@@ -38,8 +38,8 @@ def slash():
     frame.destination = 'APYSAU'
     frame.path = ['TCPIP']
     frame.source = CALLSIGN
-    frame.text = "!%s\\%s7Automatic-to-APRS gateway. http://ampledata.org" %
-        (aprs.dec2dm_lat(location['lat']), aprs.dec2dm_lng(location['lon'])
+    frame.text = ("!%s\\%s7Automatic-to-APRS gateway. http://ampledata.org" %
+        (aprs.dec2dm_lat(location['lat']), aprs.dec2dm_lng(location['lon']))
 
     print(frame)
     aprs_result = aprs_conn.send(frame)
