@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from __future__ import print
 
 import os
 import json
@@ -33,7 +32,7 @@ def slash():
     else:
         vehicle = ''
 
-    print(locals())
+    print locals()
 
     frame = aprs.Frame()
     frame.destination = 'APYSAU'
@@ -42,9 +41,9 @@ def slash():
     frame.text = ("!%s\\%s7Automatic-to-APRS gateway. http://ampledata.org" %
         (aprs.dec2dm_lat(location['lat']), aprs.dec2dm_lng(location['lon']))
 
-    print(frame)
+    print frame
     aprs_result = aprs_conn.send(frame)
-    print(aprs_result)
+    print aprs_result
 
     return 'OK'
 
