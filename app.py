@@ -23,6 +23,7 @@ def slash():
         vehicle_id = post_data['vehicle']['id']
     else:
         print 'No location or vehicle data in POST.'
+        print locals()
         return 'OK'
 
     callsign_map = json.load(open(CALLSIGN_MAP))
@@ -31,6 +32,7 @@ def slash():
         callsign = callsign_map[vehicle_id]
     else:
         print 'No valid vehicle_id to callsign mapping found.'
+        print locals()
         return 'OK'
 
     aprs_conn = aprs.TCP(
