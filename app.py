@@ -7,37 +7,46 @@ import aprs
 import flask
 
 
+
 APRSApp = flask.Flask(__name__)
 
+CALLSIGN_MAP = 'callsign_map.json'
 
-# u'location': {u'ts': 1475531304740, u'lon': -94.7016, u'accuracy_m': 10, u'lat': 41.3578}
-CALLSIGN = 'W2GMD-A'
 
 @APRSApp.route('/', methods=['POST'])
 def slash():
-    aprs_conn = aprs.TCP(
-        os.environ.get('APRS_LOGIN', 'AUTOMATIC'), os.environ.get('APRS_PORT'))
-    aprs_conn.start()
-
     post_data = json.loads(flask.request.data)
-    if 'location' in post_data:
+
+    if ('location' in post_data and 'vehicle' in post_data and
+            'id' in post_data['vehicle']):
         location = post_data['location']
+        vehicle_id = post_data['vehicle']['id']
     else:
+        print 'No location or vehicle data in POST.'
         return 'OK'
 
-    if 'vehicle' in post_data:
-        vehicle = post_data['vehicle']['id']
-    else:
-        vehicle = ''
+    callsign_map = json.load(open(CALLSIGN_MAP))
 
-    print locals()
+    if vehicle_id in callsign_map:
+        callsign = callsign_map[vehicle_id]
+    else:
+        print 'No valid vehicle_id to callsign mapping found.'
+        return 'OK'
+
+    aprs_conn = aprs.TCP(
+        os.environ.get('APRS_LOGIN', 'AUTOMATIC'),
+        os.environ.get('APRS_PORT')
+    )
+    aprs_conn.start()
 
     frame = aprs.Frame()
     frame.destination = 'APYSAU'
     frame.path = ['TCPIP']
-    frame.source = CALLSIGN
-    frame.text = ("!%s\\%s7Automatic-to-APRS gateway. http://ampledata.org" %
-        (aprs.dec2dm_lat(location['lat']), aprs.dec2dm_lng(location['lon'])))
+    frame.source = callsign
+    frame.text = (
+        "!%s\\%s7Automatic-to-APRS gateway. http://ampledata.org" %
+        (aprs.dec2dm_lat(location['lat']), aprs.dec2dm_lng(location['lon']))
+    )
 
     print frame
     aprs_result = aprs_conn.send(frame)
